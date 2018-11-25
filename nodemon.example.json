@@ -1,0 +1,5 @@
+{
+  "env" : {
+    "MONGO_CONNECTION" : "mongodb+srv://"
+  }
+}
