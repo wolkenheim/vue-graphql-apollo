@@ -1,6 +1,14 @@
 const { ApolloServer, gql } = require("apollo-server");
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
+const filePath = path.join(__dirname, 'typeDefs.gql');
+const typeDefs = fs.readFileSync(filePath, 'utf-8');
+const resolvers = require('./resolvers');
+
+const User = require('./models/User');
+const Post = require('./models/Post');
 /**
  * Connect to MongoDB
  * @type {string}
@@ -18,27 +26,16 @@ mongoose.connect(uri, { useNewUrlParser: true })
  * Remove deprecation warning without indexes
  * https://github.com/Automattic/mongoose/issues/6890
  */
-//mongoose.set('useCreateIndex', true);
+mongoose.set('useCreateIndex', true);
 
-const todos = [
-  { task: "Wash car", completed: false },
-  { task: "Clean room", completed: true }
-];
-
-const typeDefs = gql`
-  type Todo {
-    task: String
-    completed: Boolean
-  }
-
-  type Query {
-    getTodos: [Todo]
-  }
-
-`;
 
 const server = new ApolloServer({
   typeDefs,
+  resolvers,
+  context: {
+    User,
+    Post
+  }
 });
 
 
