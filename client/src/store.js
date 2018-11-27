@@ -7,19 +7,24 @@ import {gql} from 'apollo-boost';
 import {defaultClient as apolloClient} from './main';
 
 export default new Vuex.Store({
-  state: {
-    posts: []
-  },
-  mutations: {
-    setPosts: (state, posts) => {
-      state.posts = posts;
-    }
-  },
-  actions: {
-    getPosts: ({commit}) => {
-      apolloClient
-        .query({
-          query: gql`
+    state: {
+        posts: [],
+        loading: true,
+    },
+    mutations: {
+        setPosts: (state, posts) => {
+            state.posts = posts;
+        },
+        setLoading: (state, value) => {
+            state.loading = value;
+        }
+    },
+    actions: {
+        getPosts: ({commit}) => {
+            commit('setLoading', true);
+            apolloClient
+                .query({
+                    query: gql`
             query {
               getPosts {
                 _id
@@ -29,10 +34,14 @@ export default new Vuex.Store({
               }
             }
           `
-        }).then(({data}) => {
-        commit('setPosts', data.getPosts)
-      }).catch(err => console.log(err));
+                }).then(({data}) => {
+                commit('setPosts', data.getPosts);
+                commit('setLoading', false);
+            }).catch(err => {
+                console.log(err)
+                commit('setLoading', false);
+            });
 
+        }
     }
-  }
 })
