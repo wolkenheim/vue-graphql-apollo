@@ -11,17 +11,42 @@ import VueApollo from "vue-apollo";
 Vue.use(VueApollo);
 
 // Setup ApolloClient
+// with token for auth routes
 export const defaultClient = new ApolloClient({
-  uri: "http://localhost:4000/graphql"
+    uri: "http://localhost:4000/graphql",
+    fetchOptions: {
+        credentials: 'include'
+    },
+    request: operation => {
+        if(!localStorage.getItem('token')){
+            localStorage.setItem('token', '');
+        }
+        operation.setContext({
+            headers: {
+                authorization: 'Bearer ' + localStorage.getItem('token')
+            }
+        })
+    },
+    onError: ({ graohQlErrors, networkError }) => {
+        if(networkError){
+            console.log(networkError);
+        }
+        if(graohQlErrors){
+            for(let err of graohQlErrors){
+                console.dir(err);
+            }
+        }
+    }
+
 });
 
-const apolloProvider = new VueApollo({ defaultClient });
+const apolloProvider = new VueApollo({defaultClient});
 
 Vue.config.productionTip = false;
 
 new Vue({
-  apolloProvider,
-  router,
-  store,
-  render: h => h(App)
+    apolloProvider,
+    router,
+    store,
+    render: h => h(App)
 }).$mount("#app");

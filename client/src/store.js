@@ -3,13 +3,14 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-import {GET_POSTS} from './queries';
+import {GET_POSTS, LOGIN_USER, REGISTER_USER} from './queries';
 import {defaultClient as apolloClient} from './main';
 
 export default new Vuex.Store({
     state: {
         posts: [],
         loading: true,
+        token: ''
     },
     mutations: {
         setPosts: (state, posts) => {
@@ -31,6 +32,20 @@ export default new Vuex.Store({
             }).catch(err => {
                 console.log(err)
                 commit('setLoading', false);
+            });
+
+        },
+        loginUser: ({commit}, payload) => {
+            apolloClient
+                .mutate({
+                    mutation: LOGIN_USER,
+                    variables: payload
+                })
+                .then(({data}) => {
+                    localStorage.setItem('token', data.loginUser.token);
+                }).catch(err => {
+                console.log(err)
+
             });
 
         }
