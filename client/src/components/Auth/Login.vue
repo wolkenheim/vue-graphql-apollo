@@ -5,17 +5,22 @@
       <v-layout row wrap>
         <v-flex xs12 sm6 offset-sm3>
           <h1>Welcome back</h1>
-
+        </v-flex>
+      </v-layout>
+      <v-layout v-if="error" row wrap>
+        <v-flex xs12 sm6 offset-sm3>
+          <form-alert :message="error.message"></form-alert>
         </v-flex>
       </v-layout>
       <v-layout row wrap>
         <v-flex xs12 sm6 offset-sm3>
           <v-card color="secondary" dark>
             <v-container>
-              <v-form @submit.prevent="loginUser">
+              <v-form ref="form" v-model="isFormValid" lazy-validation @submit.prevent="loginUser">
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field v-model="email"
+                                  :rules="emailRules"
                                   prepend-icon="face"
                                   label="Email"
                                   type="text"
@@ -25,6 +30,7 @@
                 <v-layout row>
                   <v-flex xs12>
                     <v-text-field v-model="password"
+                                  :rules="passwordRules"
                                   prepend-icon="extension"
                                   label="Password"
                                   type="password"
@@ -33,7 +39,11 @@
                 </v-layout>
                 <v-layout row>
                   <v-flex xs12>
-                    <v-btn color="accent" type="submit">Login</v-btn>
+                    <v-btn :loading="loading" :disabled="!isFormValid" color="accent" type="submit">
+                    <span slot="loader" class="custom-loader">
+                      <v-icon light>cached</v-icon>
+                    </span>
+                      Signin</v-btn>
                     <h3>Not having an account yet?</h3>
                     <router-link class="text--primary font-weight-bold" to="/register">Register
                     </router-link>
@@ -49,18 +59,29 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex';
+  import { mapState } from 'vuex';
 
   export default {
     name: "Login",
     data() {
       return {
+        isFormValid: true,
         email: '',
-        password: ''
+        password: '',
+        emailRules: [
+          (v) => !!v || 'E-mail is required',
+          (v) => v == this.email || 'E-mail must match'
+        ],
+        passwordRules: [
+          password => !!password || "Password is required",
+          // Make sure password is at least 7 characters
+          password =>
+            password.length >= 4 || "Password must be at least 4 characters"
+        ]
       }
     },
     computed: {
-      ...mapState(['user'])
+      ...mapState(['user', 'error', 'loading'])
     },
     watch: {
       // if user values change, redirect to home
@@ -70,11 +91,51 @@
     },
     methods: {
       loginUser() {
-        this.$store.dispatch('loginUser', {
-          email: this.email,
-          password: this.password
-        })
+        if(this.$refs.form.validate()) {
+          this.$store.dispatch('loginUser', {
+            email: this.email,
+            password: this.password
+          })
+        }
       }
     }
   };
 </script>
+<style>
+  .custom-loader {
+    animation: loader 1s infinite;
+    display: flex;
+  }
+  @-moz-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-o-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

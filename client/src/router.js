@@ -9,6 +9,8 @@ import Profile from './components/Auth/Profile.vue'
 import Login from './components/Auth/Login.vue'
 import Register from './components/Auth/Register.vue'
 
+import AuthGuard from './AuthGuard';
+
 Vue.use(Router);
 
 export default new Router({
@@ -33,7 +35,8 @@ export default new Router({
     {
       path: "/profile",
       name: "Profile",
-      component: Profile
+      component: Profile,
+      beforeEnter: AuthGuard
     },
     {
       path: "/login",

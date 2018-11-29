@@ -29,8 +29,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-text-field flex prepend-icon="search" placeholder="Search posts" color="accent" single-line
-                    hide-details></v-text-field>
+      <v-text-field id="header_search" flex prepend-icon="search" placeholder="Search posts" color="accent" single-line hide-details></v-text-field>
 
       <v-spacer></v-spacer>
 
@@ -46,7 +45,7 @@
             Profile
           </v-badge>
         </v-btn>
-        <v-btn flat to="/logout" v-if="user">
+        <v-btn flat @click="onLogoutUser" v-if="user">
           <v-icon class="hidden-sm-only" left>exit_to_app</v-icon>
           <v-badge right color="blue darken-2">
             Log out
@@ -67,7 +66,7 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+  import {mapState} from 'vuex';
 
   export default {
     name: 'App',
@@ -80,27 +79,27 @@
       ...mapState(['user']),
       horizontalNavbar() {
         let items = [
-          { icon: 'create', title: 'Register', link: '/register' },
-          { icon: 'lock_open', title: 'Login', link: '/login' },
+          {icon: 'create', title: 'Register', link: '/register'},
+          {icon: 'lock_open', title: 'Login', link: '/login'},
         ];
         if (this.user) {
           items = [
-            { icon: 'chat', title: 'Posts', link: '/posts' } ,
+            {icon: 'chat', title: 'Posts', link: '/posts'},
           ];
         }
         return items;
       },
       sideNavbar() {
-        let items =  [
-          { icon: 'chat', title: 'Posts', link: '/posts' },
-          { icon: 'create', title: 'Register', link: '/register' },
-          { icon: 'lock_open', title: 'Login', link: '/login' },
+        let items = [
+          {icon: 'chat', title: 'Posts', link: '/posts'},
+          {icon: 'create', title: 'Register', link: '/register'},
+          {icon: 'lock_open', title: 'Login', link: '/login'},
         ];
         if (this.user) {
           items = [
-            { icon: 'chat', title: 'Posts', link: '/posts' },
-            { icon: 'stars', title: 'Create Posts', link: '/post/add' },
-            { icon: 'account_box', title: 'Profile', link: '/profile' },
+            {icon: 'chat', title: 'Posts', link: '/posts'},
+            {icon: 'stars', title: 'Create Posts', link: '/post/add'},
+            {icon: 'account_box', title: 'Profile', link: '/profile'},
           ];
         }
         return items;
@@ -109,11 +108,17 @@
     methods: {
       toggleSideNav() {
         this.showSideNav = !this.showSideNav;
+      },
+      onLogoutUser() {
+        this.$store.dispatch('logoutUser');
       }
     }
   }
 </script>
 <style>
+  #header_search {
+    padding-top:0;
+  }
   .fade-enter-active,
   .fade-leave-active {
     transition-property: opacity;
