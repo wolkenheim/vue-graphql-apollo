@@ -29,7 +29,8 @@
 
       <v-spacer></v-spacer>
 
-      <v-text-field id="header_search" flex prepend-icon="search" placeholder="Search posts" color="accent" single-line hide-details></v-text-field>
+      <v-text-field id="header_search" flex prepend-icon="search" placeholder="Search posts" color="accent" single-line
+                    hide-details></v-text-field>
 
       <v-spacer></v-spacer>
 
@@ -58,7 +59,21 @@
     <main>
       <v-container class="mt-4">
         <transition name="fade"></transition>
+
         <router-view/>
+
+        <v-snackbar v-model="authSnackbar" color="success" :timeout='5000' bottom left>
+          <v-icon class="mr-3">check_circle</v-icon>
+          <h3>You are now signed in!</h3>
+          <v-btn dark flat @click="authSnackbar = false">Close</v-btn>
+        </v-snackbar>
+
+        <v-snackbar v-if="authError" v-model="authErrorSnackbar" color="error" :timeout='10000' bottom left>
+          <v-icon class="mr-3">cancel</v-icon>
+          <h3>{{authError.message}}</h3>
+          <v-btn dark flat to="/login">Log in</v-btn>
+        </v-snackbar>
+
       </v-container>
     </main>
 
@@ -66,43 +81,57 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex';
+  import { mapState } from 'vuex';
 
   export default {
     name: 'App',
     data() {
       return {
+        authErrorSnackbar: false,
+        authSnackbar: false,
         showSideNav: false,
       }
     },
     computed: {
-      ...mapState(['user']),
+      ...mapState(['user', 'authError']),
       horizontalNavbar() {
         let items = [
-          {icon: 'create', title: 'Register', link: '/register'},
-          {icon: 'lock_open', title: 'Login', link: '/login'},
+          { icon: 'create', title: 'Register', link: '/register' },
+          { icon: 'lock_open', title: 'Login', link: '/login' },
         ];
         if (this.user) {
           items = [
-            {icon: 'chat', title: 'Posts', link: '/posts'},
+            { icon: 'chat', title: 'Posts', link: '/posts' },
           ];
         }
         return items;
       },
       sideNavbar() {
         let items = [
-          {icon: 'chat', title: 'Posts', link: '/posts'},
-          {icon: 'create', title: 'Register', link: '/register'},
-          {icon: 'lock_open', title: 'Login', link: '/login'},
+          { icon: 'chat', title: 'Posts', link: '/posts' },
+          { icon: 'create', title: 'Register', link: '/register' },
+          { icon: 'lock_open', title: 'Login', link: '/login' },
         ];
         if (this.user) {
           items = [
-            {icon: 'chat', title: 'Posts', link: '/posts'},
-            {icon: 'stars', title: 'Create Posts', link: '/post/add'},
-            {icon: 'account_box', title: 'Profile', link: '/profile'},
+            { icon: 'chat', title: 'Posts', link: '/posts' },
+            { icon: 'stars', title: 'Create Posts', link: '/post/add' },
+            { icon: 'account_box', title: 'Profile', link: '/profile' },
           ];
         }
         return items;
+      }
+    },
+    watch: {
+      user(newValue, oldValue) {
+        if (oldValue === null) {
+          this.authSnackbar = true;
+        }
+      },
+      authError(value) {
+        if (value !== null) {
+          this.authErrorSnackbar = true;
+        }
       }
     },
     methods: {
@@ -117,8 +146,9 @@
 </script>
 <style>
   #header_search {
-    padding-top:0;
+    padding-top: 0;
   }
+
   .fade-enter-active,
   .fade-leave-active {
     transition-property: opacity;
