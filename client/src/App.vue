@@ -7,18 +7,18 @@
           <h1>Vue Share</h1>
         </router-link>
       </v-toolbar>
-        <v-divider></v-divider>
-        <v-list>
-          <v-list-tile ripple v-for="item in sideNavbar" :key="item.title" :to="item.link">
-            <v-list-tile-action>
-              <v-icon>{{ item.icon }}</v-icon>
+      <v-divider></v-divider>
+      <v-list>
+        <v-list-tile ripple v-for="item in sideNavbar" :key="item.title" :to="item.link">
+          <v-list-tile-action>
+            <v-icon>{{ item.icon }}</v-icon>
 
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <span>{{ item.title }}</span>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <span>{{ item.title }}</span>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
 
     </v-navigation-drawer>
     <v-toolbar fixed color="primary" dark>
@@ -29,13 +29,28 @@
 
       <v-spacer></v-spacer>
 
-      <v-text-field flex prepend-icon="search" placeholder="Search Posts" color="accent" single-line hide-details>
-      </v-text-field>
+      <v-text-field flex prepend-icon="search" placeholder="Search posts" color="accent" single-line
+                    hide-details></v-text-field>
+
       <v-spacer></v-spacer>
+
       <v-toolbar-items>
         <v-btn flat v-for="(item, index) in horizontalNavbar" :to="item.link" :key="index">
           <v-icon left>{{ item.icon }}</v-icon>
           <span class="hidden-xs-only">{{ item.title }}</span>
+        </v-btn>
+        <v-btn flat to="/profile" v-if="user">
+          <v-icon class="hidden-sm-only" left>account_box</v-icon>
+          <v-badge right color="blue darken-2">
+            <span slot="badge">1</span>
+            Profile
+          </v-badge>
+        </v-btn>
+        <v-btn flat to="/logout" v-if="user">
+          <v-icon class="hidden-sm-only" left>exit_to_app</v-icon>
+          <v-badge right color="blue darken-2">
+            Log out
+          </v-badge>
         </v-btn>
       </v-toolbar-items>
 
@@ -52,6 +67,7 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex';
 
   export default {
     name: 'App',
@@ -61,19 +77,33 @@
       }
     },
     computed: {
-      horizontalNavbar(){
-        return [
-          { icon: 'chat', title: 'Posts', link: '/posts' },
+      ...mapState(['user']),
+      horizontalNavbar() {
+        let items = [
           { icon: 'create', title: 'Register', link: '/register' },
           { icon: 'lock_open', title: 'Login', link: '/login' },
-        ]
+        ];
+        if (this.user) {
+          items = [
+            { icon: 'chat', title: 'Posts', link: '/posts' } ,
+          ];
+        }
+        return items;
       },
-      sideNavbar(){
-        return [
+      sideNavbar() {
+        let items =  [
           { icon: 'chat', title: 'Posts', link: '/posts' },
           { icon: 'create', title: 'Register', link: '/register' },
           { icon: 'lock_open', title: 'Login', link: '/login' },
-        ]
+        ];
+        if (this.user) {
+          items = [
+            { icon: 'chat', title: 'Posts', link: '/posts' },
+            { icon: 'stars', title: 'Create Posts', link: '/post/add' },
+            { icon: 'account_box', title: 'Profile', link: '/profile' },
+          ];
+        }
+        return items;
       }
     },
     methods: {
