@@ -15,19 +15,22 @@
                             <v-form @submit.prevent="loginUser">
                                 <v-layout row>
                                     <v-flex xs12>
-                                        <v-text-field v-model="email" prepend-icon="face" label="Email" type="text" required></v-text-field>
+                                        <v-text-field v-model="email" prepend-icon="face" label="Email" type="text"
+                                                      required></v-text-field>
                                     </v-flex>
                                 </v-layout>
                                 <v-layout row>
                                     <v-flex xs12>
-                                        <v-text-field v-model="password" prepend-icon="extension" label="Password" type="password" required></v-text-field>
+                                        <v-text-field v-model="password" prepend-icon="extension" label="Password"
+                                                      type="password" required></v-text-field>
                                     </v-flex>
                                 </v-layout>
                                 <v-layout row>
                                     <v-flex xs12>
                                         <v-btn color="accent" type="submit">Login</v-btn>
                                         <h3>Not having an account yet?</h3>
-                                        <router-link class="text--primary font-weight-bold" to="/register">Register</router-link>
+                                        <router-link class="text--primary font-weight-bold" to="/register">Register
+                                        </router-link>
                                     </v-flex>
                                 </v-layout>
                             </v-form>

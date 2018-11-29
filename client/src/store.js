@@ -1,16 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from './router';
 
 Vue.use(Vuex)
 
-import {GET_POSTS, LOGIN_USER, REGISTER_USER} from './queries';
+import {GET_POSTS, LOGIN_USER, REGISTER_USER, GET_CURRENT_USER} from './queries';
 import {defaultClient as apolloClient} from './main';
 
 export default new Vuex.Store({
     state: {
         posts: [],
         loading: true,
-        token: ''
+        user: null
     },
     mutations: {
         setPosts: (state, posts) => {
@@ -18,9 +19,25 @@ export default new Vuex.Store({
         },
         setLoading: (state, value) => {
             state.loading = value;
+        },
+        setUser: (state, user) => {
+            state.user = user;
         }
     },
     actions: {
+        getCurrentUser: ({commit}) => {
+            commit('setLoading');
+            apolloClient.query({
+                query: GET_CURRENT_USER
+            }).then(({data}) => {
+                commit('setUser', data.getCurrentUser);
+                commit('setLoading', false);
+            }).catch(err => {
+                console.log(err)
+                commit('setLoading', false);
+            });
+
+        },
         getPosts: ({commit}) => {
             commit('setLoading', true);
             apolloClient
@@ -43,6 +60,7 @@ export default new Vuex.Store({
                 })
                 .then(({data}) => {
                     localStorage.setItem('token', data.loginUser.token);
+                    router.go();
                 }).catch(err => {
                 console.log(err)
 

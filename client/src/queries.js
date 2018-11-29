@@ -37,3 +37,20 @@ export const REGISTER_USER = gql`
       }
     }
     `;
+
+export const GET_CURRENT_USER = gql`
+    query {
+      getCurrentUser {
+        _id
+        username
+        email
+        avatar
+        favorites {
+            _id
+            title
+            imageUrl
+        }
+        joinDate
+      }
+    }
+    `;

@@ -18,12 +18,12 @@ export const defaultClient = new ApolloClient({
         credentials: 'include'
     },
     request: operation => {
-        if(!localStorage.getItem('token')){
+        if(!localStorage.token){
             localStorage.setItem('token', '');
         }
         operation.setContext({
             headers: {
-                authorization: 'Bearer ' + localStorage.getItem('token')
+                authorization: localStorage.getItem('token')
             }
         })
     },
@@ -48,5 +48,8 @@ new Vue({
     apolloProvider,
     router,
     store,
-    render: h => h(App)
+    render: h => h(App),
+    created() {
+        this.$store.dispatch('getCurrentUser');
+    }
 }).$mount("#app");

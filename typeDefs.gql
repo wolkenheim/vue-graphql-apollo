@@ -28,6 +28,7 @@ type Message {
 }
 
 type Query {
+  getCurrentUser: User
   getPosts: [Post]
 }
 
