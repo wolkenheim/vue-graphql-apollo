@@ -8,7 +8,7 @@ Vue.use(Vuetify, {
     primary: "#5176bb",
     secondary: "#7f93c1",
     accent: "#c5d2b2",
-    error: "#721c0a",
+    error: "#722d0e",
     warning: "#A37513",
     info: "#396893",
     success: "#4caf50"

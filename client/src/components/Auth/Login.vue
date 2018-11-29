@@ -21,7 +21,7 @@
                   <v-flex xs12>
                     <v-text-field v-model="email"
                                   :rules="emailRules"
-                                  prepend-icon="face"
+                                  prepend-icon="email"
                                   label="Email"
                                   type="text"
                                   required></v-text-field>
@@ -70,11 +70,9 @@
         password: '',
         emailRules: [
           (v) => !!v || 'E-mail is required',
-          (v) => v == this.email || 'E-mail must match'
         ],
         passwordRules: [
           password => !!password || "Password is required",
-          // Make sure password is at least 7 characters
           password =>
             password.length >= 4 || "Password must be at least 4 characters"
         ]

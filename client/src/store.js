@@ -74,12 +74,32 @@ export default new Vuex.Store({
         .then(({ data }) => {
           commit("setLoading", false);
           localStorage.setItem('token', data.loginUser.token);
-          router.go();
+          router.push('/');
         }).catch(err => {
         commit('setError', err);
         console.log(err)
 
       });
+    },
+    registerUser: ({ commit }, payload) => {
+      commit('clearError');
+      commit('setLoading', true);
+      apolloClient
+        .mutate({
+          mutation: REGISTER_USER,
+          variables: payload
+        })
+        .then(({ data }) => {
+          commit("setLoading", false);
+          localStorage.setItem("token", data.registerUser.token);
+          router.go();
+        })
+        .catch(err => {
+          commit("setLoading", false);
+          commit("setError", err);
+          console.error(err);
+        });
+
     },
     logoutUser: async ({ commit }, payload) => {
       commit('clearUser');
