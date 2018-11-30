@@ -2,7 +2,7 @@
  * Store all GQL queries in central file
  */
 
-import {gql} from 'apollo-boost';
+import { gql } from 'apollo-boost';
 
 export const GET_POSTS = gql`
     query {
@@ -14,6 +14,32 @@ export const GET_POSTS = gql`
       }
     }
     `;
+
+export const ADD_POST = gql`
+    mutation(
+      $title: String!,
+      $imageUrl:String!,
+      $categories: [String]!,
+      $description: String!,
+      $userId:ID!
+    ) {
+      addPost(
+        title:$title
+        imageUrl:$imageUrl
+        categories:$categories
+        description:$description
+        userId:$userId
+      ){
+        _id
+        title
+        imageUrl
+        categories
+        description
+      }
+    }
+
+    `;
+
 
 export const LOGIN_USER = gql`
     mutation($email: String!, $password: String!) {

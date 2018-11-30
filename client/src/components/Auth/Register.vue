@@ -3,7 +3,7 @@
     <v-form>
       <v-layout row wrap>
         <v-flex xs12 sm6 offset-sm3>
-          <h1>Register</h1>
+          <h1>{{ headline }}</h1>
         </v-flex>
       </v-layout>
       <v-layout v-if="error" row wrap>
@@ -86,6 +86,7 @@
     name: "Register",
     data() {
       return {
+        headline: 'Register',
         isFormValid: true,
         username: '',
         email: '',

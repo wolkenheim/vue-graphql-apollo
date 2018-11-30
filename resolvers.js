@@ -10,7 +10,7 @@ module.exports = {
     Query: {
         getPosts: async (_, args, { Post }) => {
             const posts = await Post.find().sort({createdDate: 'desc'}).populate({
-                path: 'createdBy',
+                path: 'userId',
                 model: 'User'
             });
             return posts;
@@ -29,7 +29,7 @@ module.exports = {
     Mutation: {
         addPost: async (
             _,
-            {title, imageUrl, categories, description, creatorId},
+            {title, imageUrl, categories, description, userId},
             {Post}
         ) => {
             const newPost = await new Post({
@@ -37,7 +37,7 @@ module.exports = {
                 imageUrl,
                 categories,
                 description,
-                createdBy: creatorId
+                userId,
             }).save();
             return newPost;
         },

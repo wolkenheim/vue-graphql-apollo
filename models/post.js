@@ -24,10 +24,10 @@ const PostSchema = new mongoose.Schema({
     default: 0
   },
   /**
-   * property('createdBy') === path
+   * property('userId') === path
    * ref('User') === model
    */
-  createdBy: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User'

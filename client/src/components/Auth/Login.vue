@@ -1,12 +1,8 @@
 <template>
   <v-container text-xs-center mt-5 pt-5>
-    <h1>Login</h1>
+    <h1 v-if="!user">{{ headline }}</h1>
+    <h2 v-else>Welcome back</h2>
     <v-form>
-      <v-layout row wrap>
-        <v-flex xs12 sm6 offset-sm3>
-          <h1>Welcome back</h1>
-        </v-flex>
-      </v-layout>
       <v-layout v-if="error" row wrap>
         <v-flex xs12 sm6 offset-sm3>
           <form-alert :message="error.message"></form-alert>
@@ -65,6 +61,7 @@
     name: "Login",
     data() {
       return {
+        headline: 'Login',
         isFormValid: true,
         email: '',
         password: '',

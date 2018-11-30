@@ -16,7 +16,7 @@ type Post {
   description: String
   createdDate: String
   likes: Int
-  createdBy: User!
+  userId: User!
   messages: [Message]
 }
 
@@ -42,7 +42,7 @@ type Mutation {
     imageUrl: String!
     categories: [String]!
     description: String!
-    creatorId: ID!
+    userId: ID!
   ): Post!
   registerUser(username: String!, email: String!, password: String!): Token!
   loginUser(email: String!, password: String!): Token!

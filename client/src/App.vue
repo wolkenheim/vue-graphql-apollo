@@ -109,13 +109,14 @@
       sideNavbar() {
         let items = [
           { icon: 'chat', title: 'Posts', link: '/posts' },
+          { icon: 'add', title: 'Add Post', link: '/post/add' },
           { icon: 'create', title: 'Register', link: '/register' },
           { icon: 'lock_open', title: 'Login', link: '/login' },
         ];
         if (this.user) {
           items = [
             { icon: 'chat', title: 'Posts', link: '/posts' },
-            { icon: 'stars', title: 'Create Posts', link: '/post/add' },
+            { icon: 'stars', title: 'Add Posts', link: '/post/add' },
             { icon: 'account_box', title: 'Profile', link: '/profile' },
           ];
         }
