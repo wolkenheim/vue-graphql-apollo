@@ -4,7 +4,7 @@
     <!-- Post Cards -->
     <v-layout row wrap v-if="infiniteScrollPosts">
       <v-flex xs12 sm6 v-for="post in infiniteScrollPosts.posts" :key="post._id">
-        <v-card hover>
+        <v-card hover @click.native="goToPost(post._id)">
           <v-img :src="post.imageUrl" height="30vh" lazy></v-img>
 
           <v-card-actions>
@@ -82,6 +82,9 @@
       }
     },
     methods: {
+      goToPost(_id){
+        this.$router.push(`/posts/${_id}`);
+      },
       showMorePosts() {
         this.pageNum += 1;
         // fetch more data and transform original result

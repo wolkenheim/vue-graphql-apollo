@@ -15,11 +15,21 @@ module.exports = {
       });
       return posts;
     },
+    getPost: async (_, { postId }, { Post }) => {
+      const post = await Post.findOne({ _id: postId }).populate({
+        path: "messages.messageUser",
+        model: "User"
+      });
+      return post;
+    },
     getCurrentUser: async (_, args, { User, currentUser }) => {
       if (!currentUser) {
         return null;
       }
       const user = await User.findOne({ email: currentUser.email }).populate({
+        path: 'favorites',
+        model: 'Post'
+      }).populate({
         path: 'favorites',
         model: 'Post'
       })
