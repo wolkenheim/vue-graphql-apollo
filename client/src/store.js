@@ -4,7 +4,7 @@ import router from './router';
 
 Vue.use(Vuex)
 
-import { GET_POSTS, ADD_POST, LOGIN_USER, REGISTER_USER, GET_CURRENT_USER } from './queries';
+import { GET_POSTS, ADD_POST, INFINITE_SCROLL_POSTS, LOGIN_USER, REGISTER_USER, GET_CURRENT_USER } from './queries';
 import { defaultClient as apolloClient } from './main';
 
 export default new Vuex.Store({
