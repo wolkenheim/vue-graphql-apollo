@@ -25,6 +25,7 @@ export const defaultClient = new ApolloClient({
   request: operation => {
     if (!localStorage.token) {
       localStorage.setItem('token', '');
+      localStorage.setItem('user', '');
     }
     operation.setContext({
       headers: {

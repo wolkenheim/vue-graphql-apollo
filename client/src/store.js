@@ -72,7 +72,6 @@ export default new Vuex.Store({
             // Create updated data
             data.getPosts.unshift(addPost);
             // Write updated data back to query
-            console.log(data);
             cache.writeQuery({
               query: GET_POSTS,
               data
@@ -106,8 +105,10 @@ export default new Vuex.Store({
           variables: payload
         })
         .then(({ data }) => {
+          console.log(data);
           commit("setLoading", false);
           localStorage.setItem('token', data.loginUser.token);
+          localStorage.setItem('user', data.loginUser.user.username);
           router.push('/');
         }).catch(err => {
         commit('setError', err);
@@ -138,6 +139,7 @@ export default new Vuex.Store({
     logoutUser: async ({ commit }, payload) => {
       commit('clearUser');
       localStorage.setItem('token', '');
+      localStorage.setItem('user', '');
       await apolloClient.resetStore();
       router.push('/');
     }

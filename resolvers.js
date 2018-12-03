@@ -106,7 +106,7 @@ module.exports = {
       if (!isValidPassowrd) {
         throw new Error('Wrong Password');
       }
-      return { token: createToken(user, process.env.JWT_SALT, '1hr') };
+      return { token: createToken(user, process.env.JWT_SALT, '1hr'), user };
     },
     registerUser: async (_, { username, email, password }, { User }) => {
       const user = await User.findOne({ username });
