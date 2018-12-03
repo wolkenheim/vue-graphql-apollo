@@ -42,10 +42,10 @@
       <!-- Message Input -->
       <v-layout class="mb-3" v-if="user">
         <v-flex xs12>
-          <v-form @submit.prevent="handleAddPostMessage">
+          <v-form v-model="isFormValid" lazy-validation ref="form" @submit.prevent="handleAddPostMessage">
             <v-layout row>
               <v-flex xs12>
-                <v-text-field v-model="messageBody" clearable :append-outer-icon="messageBody && 'send'" label="Add Message" type="text" @click:append-outer="handleAddPostMessage" prepend-icon="email" required></v-text-field>
+                <v-text-field v-model="messageBody" clearable :rules="messageRules" :append-outer-icon="messageBody && 'send'" label="Add Message" type="text" @click:append-outer="handleAddPostMessage" prepend-icon="email" required></v-text-field>
               </v-flex>
             </v-layout>
           </v-form>
@@ -77,7 +77,7 @@
                 </v-list-tile-content>
 
                 <v-list-tile-action class='hidden-xs-only'>
-                  <v-icon color="grey">chat_bubble</v-icon>
+                  <v-icon color="grey" :color="checkIfOwnfMessage(message) ? 'accent' : 'grey'">chat_bubble</v-icon>
                 </v-list-tile-action>
 
               </v-list-tile>
@@ -101,7 +101,13 @@
     data() {
       return {
         dialog: false,
-        messageBody: ""
+        messageBody: "",
+        isFormValid: true,
+        messageRules: [
+          message => !!message || "Message is required",
+          message => message.length > 3 || "Message needs to be longer then 3 characters",
+          message => message.length < 100 || "Message has to be shorter then 100 characters"
+        ]
       };
     },
     apollo: {
@@ -119,6 +125,7 @@
     },
     methods: {
       handleAddPostMessage() {
+        if(!this.$refs.form.validate()) return;
         const variables = {
           messageBody: this.messageBody,
           userId: this.user._id,
@@ -143,6 +150,8 @@
           })
           .then(({ data }) => {
             console.log(data.addPostMessage);
+            this.messageBody = "";
+            //this.$refs.form.reset();
           })
           .catch(err => console.error(err));
       },
@@ -153,6 +162,9 @@
         if (window.innerWidth > 500) {
           this.dialog = !this.dialog;
         }
+      },
+      checkIfOwnfMessage(message){
+        return this.user && this.user._id === message.messageUser._id;
       }
     }
   };
