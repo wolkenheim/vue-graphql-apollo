@@ -35,7 +35,7 @@ export default new Router({
       props: true
     },
     {
-      path: "/posts/add",
+      path: "/post/add",
       name: "AddPost",
       component: AddPost,
       beforeEnter: AuthGuard
