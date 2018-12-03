@@ -78,17 +78,21 @@ module.exports = {
       return newPost;
     },
     addPostMessage: async (_, { messageBody, userId, postId }, { Post }) => {
+      console.log(messageBody, userId, postId);
       const newMessage = {
-        messageBody, messageUser: userId
+        messageBody,
+        messageUser: userId
       };
       const post = await Post.findOneAndUpdate(
+        // find post by id
         { _id: postId },
-        // prepend new Messages to array
-        { $push: { messages: { $each: [newMesssage], $position: 0 } } },
+        // prepend (push) new message to beginning of messages array
+        { $push: { messages: { $each: [newMessage], $position: 0 } } },
+        // return fresh document after update
         { new: true }
       ).populate({
-        messages: 'message.messageUser',
-        model: 'User'
+        path: "messages.messageUser",
+        model: "User"
       });
       return post.messages[0];
     },
