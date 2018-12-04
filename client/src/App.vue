@@ -8,6 +8,8 @@
         </router-link>
       </v-toolbar>
       <v-divider></v-divider>
+
+      <!-- Side Navbar Links -->
       <v-list>
         <v-list-tile ripple v-for="item in sideNavbar" :key="item.title" :to="item.link">
           <v-list-tile-action>
@@ -34,15 +36,17 @@
 
       <v-spacer></v-spacer>
 
+      <!-- Horizontal Navbar Links -->
       <v-toolbar-items>
         <v-btn flat v-for="(item, index) in horizontalNavbar" :to="item.link" :key="index">
           <v-icon left>{{ item.icon }}</v-icon>
           <span class="hidden-xs-only">{{ item.title }}</span>
         </v-btn>
+
         <v-btn flat to="/profile" v-if="user">
           <v-icon class="hidden-sm-only" left>account_box</v-icon>
-          <v-badge right color="blue darken-2">
-            <span slot="badge">1</span>
+          <v-badge right color="blue darken-2" :class="{ 'bounce': badgeAnimated }">
+            <span slot="badge" v-if="userFavorites.length">{{userFavorites.length}}</span>
             Profile
           </v-badge>
         </v-btn>
@@ -90,10 +94,14 @@
         authErrorSnackbar: false,
         authSnackbar: false,
         showSideNav: false,
+        badgeAnimated: false
       }
     },
     computed: {
       ...mapState(['user', 'authError']),
+      userFavorites(){
+        return this.$store.getters.userFavorites;
+      },
       horizontalNavbar() {
         let items = [
           { icon: 'create', title: 'Register', link: '/register' },
@@ -124,6 +132,13 @@
       }
     },
     watch: {
+      userFavorites(value) {
+        // if user favorites value changed at all
+        if (value) {
+          this.badgeAnimated = true;
+          setTimeout(() => (this.badgeAnimated = false), 1000);
+        }
+      },
       user(newValue, oldValue) {
         if (oldValue === null) {
           this.authSnackbar = true;
@@ -163,5 +178,30 @@
   .fade-enter,
   .fade-leave-active {
     opacity: 0;
+  }
+
+  /* User Favorite Animation */
+  .bounce {
+    animation: bounce 1s both;
+  }
+
+  @keyframes bounce {
+    0%,
+    20%,
+    53%,
+    80%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    40%,
+    43% {
+      transform: translate3d(0, -20px, 0);
+    }
+    70% {
+      transform: translate3d(0, -10px, 0);
+    }
+    90% {
+      transform: translate3d(0, -4px, 0);
+    }
   }
 </style>

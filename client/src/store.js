@@ -151,5 +151,8 @@ export default new Vuex.Store({
       await apolloClient.resetStore();
       router.push('/');
     }
+  },
+  getters: {
+    userFavorites: state => state.user && state.user.favorites,
   }
 })
