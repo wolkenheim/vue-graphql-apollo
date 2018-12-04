@@ -10,7 +10,7 @@ import { defaultClient as apolloClient } from './main';
 export default new Vuex.Store({
   state: {
     posts: [],
-    loading: true,
+    loading: false,
     user: null,
     error: null,
     authError: null,
@@ -24,6 +24,7 @@ export default new Vuex.Store({
     },
     setUser: (state, user) => {
       state.user = user;
+      localStorage.setItem('user', JSON.stringify(user));
     },
     setError: (state, error) => {
       state.error = error;
@@ -31,10 +32,16 @@ export default new Vuex.Store({
     setAuthError: (state, error) => {
       state.authError = error;
     },
-    clearUser: state => (state.user = null),
+    clearUser: state => {
+      state.user = null;
+      localStorage.setItem('user', '');
+    },
     clearError: state => (state.error = null)
   },
   actions: {
+    initUser: ({ commit, state }) => {
+      state.user = JSON.parse(localStorage.getItem('user'));
+    },
     getCurrentUser: ({ commit }) => {
       commit('setLoading');
       apolloClient.query({
@@ -108,10 +115,11 @@ export default new Vuex.Store({
           console.log(data);
           commit("setLoading", false);
           localStorage.setItem('token', data.loginUser.token);
-          localStorage.setItem('user', data.loginUser.user.username);
+          commit('setUser', data.loginUser.user);
           router.push('/');
         }).catch(err => {
         commit('setError', err);
+        commit("setLoading", false);
         console.log(err)
 
       });
@@ -139,7 +147,7 @@ export default new Vuex.Store({
     logoutUser: async ({ commit }, payload) => {
       commit('clearUser');
       localStorage.setItem('token', '');
-      localStorage.setItem('user', '');
+
       await apolloClient.resetStore();
       router.push('/');
     }

@@ -137,7 +137,10 @@ module.exports = {
       return { likes: post.likes, favorites: user.favorites }
     },
     loginUser: async (_, { email, password }, { User }) => {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email }).populate({
+        path: 'favorites',
+        model: 'Post'
+      });
       if (!user) {
         throw new Error('User not found');
       }

@@ -7,8 +7,8 @@
         <v-card hover>
           <v-card-title>
             <h1>{{getPost.title}}</h1>
-            <v-btn large icon v-if="user">
-              <v-icon large color="grey">favorite</v-icon>
+            <v-btn @click="handleToggleLike" large icon v-if="user">
+              <v-icon large :color="checkIfPostLiked(getPost._id) ? 'red' : 'grey'">favorite</v-icon>
             </v-btn>
             <h3 class="ml-3 font-weight-thin">{{getPost.likes}} LIKES</h3>
             <v-spacer></v-spacer>
@@ -17,7 +17,8 @@
 
           <v-tooltip right>
             <span>Click to enlarge image</span>
-            <v-img @click="toggleImageDialog" slot="activator" :src="getPost.imageUrl" id="post__image"></v-img>
+            <v-img @click="toggleImageDialog" slot="activator" :src="getPost.imageUrl"
+                          id="post__image"></v-img>
           </v-tooltip>
 
           <!-- Post Image Dialog -->
@@ -45,7 +46,9 @@
           <v-form v-model="isFormValid" lazy-validation ref="form" @submit.prevent="handleAddPostMessage">
             <v-layout row>
               <v-flex xs12>
-                <v-text-field v-model="messageBody" clearable :rules="messageRules" :append-outer-icon="messageBody && 'send'" label="Add Message" type="text" @click:append-outer="handleAddPostMessage" prepend-icon="email" required></v-text-field>
+                <v-text-field :rules="messageRules" v-model="messageBody" clearable
+                              :append-outer-icon="messageBody && 'send'" label="Add Message" type="text"
+                              @click:append-outer="handleAddPostMessage" prepend-icon="email" required></v-text-field>
               </v-flex>
             </v-layout>
           </v-form>
@@ -77,7 +80,7 @@
                 </v-list-tile-content>
 
                 <v-list-tile-action class='hidden-xs-only'>
-                  <v-icon color="grey" :color="checkIfOwnfMessage(message) ? 'accent' : 'grey'">chat_bubble</v-icon>
+                  <v-icon :color="checkIfOwnMessage(message) ? 'accent' : 'grey'">chat_bubble</v-icon>
                 </v-list-tile-action>
 
               </v-list-tile>
@@ -93,20 +96,26 @@
 
 <script>
   import { mapState } from "vuex";
-  import { GET_POST, ADD_POST_MESSAGE  } from "../../queries";
+  import {
+    GET_POST,
+    ADD_POST_MESSAGE,
+    LIKE_POST,
+    UNLIKE_POST
+  } from "../../queries";
 
   export default {
     name: "Post",
     props: ["postId"],
     data() {
       return {
+        postLiked: false,
         dialog: false,
         messageBody: "",
         isFormValid: true,
         messageRules: [
           message => !!message || "Message is required",
-          message => message.length > 3 || "Message needs to be longer then 3 characters",
-          message => message.length < 100 || "Message has to be shorter then 100 characters"
+          message =>
+            message.length < 75 || "Message must be less than 75 characters"
         ]
       };
     },
@@ -121,26 +130,49 @@
       }
     },
     computed: {
-      ...mapState(["user"])
+      ...mapState(["user", "userFavorites"])
     },
     methods: {
-      handleAddPostMessage() {
-        if(!this.$refs.form.validate()) return;
+      /**
+       * Did user alread like this post?
+       * @param postId
+       * @returns {boolean}
+       */
+      checkIfPostLiked(postId) {
+        if(!this.user.hasOwnProperty('favorites')) return false;
+        if (
+          this.user.favorites &&
+          this.user.favorites.some(fave => fave._id === postId)
+        ) {
+          this.postLiked = true;
+          return true;
+        } else {
+          this.postLiked = false;
+          return false;
+        }
+      },
+      handleToggleLike() {
+        if (this.postLiked) {
+          this.handleUnlikePost();
+        } else {
+          this.handleLikePost();
+        }
+      },
+      handleLikePost() {
         const variables = {
-          messageBody: this.messageBody,
-          userId: this.user._id,
-          postId: this.postId
+          postId: this.postId,
+          username: this.user.username
         };
         this.$apollo
           .mutate({
-            mutation: ADD_POST_MESSAGE,
+            mutation: LIKE_POST,
             variables,
-            update: (cache, { data: { addPostMessage } }) => {
+            update: (cache, { data: { likePost } }) => {
               const data = cache.readQuery({
                 query: GET_POST,
                 variables: { postId: this.postId }
               });
-              data.getPost.messages.unshift(addPostMessage);
+              data.getPost.likes += 1;
               cache.writeQuery({
                 query: GET_POST,
                 variables: { postId: this.postId },
@@ -149,11 +181,75 @@
             }
           })
           .then(({ data }) => {
-            console.log(data.addPostMessage);
-            this.messageBody = "";
-            //this.$refs.form.reset();
+            const updatedUser = {
+              ...this.user,
+              favorites: data.likePost.favorites
+            };
+            this.$store.commit("setUser", updatedUser);
           })
           .catch(err => console.error(err));
+      },
+      handleUnlikePost() {
+        const variables = {
+          postId: this.postId,
+          username: this.user.username
+        };
+        this.$apollo
+          .mutate({
+            mutation: UNLIKE_POST,
+            variables,
+            update: (cache, { data: { unlikePost } }) => {
+              const data = cache.readQuery({
+                query: GET_POST,
+                variables: { postId: this.postId }
+              });
+              data.getPost.likes -= 1;
+              cache.writeQuery({
+                query: GET_POST,
+                variables: { postId: this.postId },
+                data
+              });
+            }
+          })
+          .then(({ data }) => {
+            const updatedUser = {
+              ...this.user,
+              favorites: data.unlikePost.favorites
+            };
+            this.$store.commit("setUser", updatedUser);
+          })
+          .catch(err => console.error(err));
+      },
+      handleAddPostMessage() {
+        if (this.$refs.form.validate()) {
+          const variables = {
+            messageBody: this.messageBody,
+            userId: this.user._id,
+            postId: this.postId
+          };
+          this.$apollo
+            .mutate({
+              mutation: ADD_POST_MESSAGE,
+              variables,
+              update: (cache, { data: { addPostMessage } }) => {
+                const data = cache.readQuery({
+                  query: GET_POST,
+                  variables: { postId: this.postId }
+                });
+                data.getPost.messages.unshift(addPostMessage);
+                cache.writeQuery({
+                  query: GET_POST,
+                  variables: { postId: this.postId },
+                  data
+                });
+              }
+            })
+            .then(({ data }) => {
+              this.$refs.form.reset();
+              console.log(data.addPostMessage);
+            })
+            .catch(err => console.error(err));
+        }
       },
       goToPreviousPage() {
         this.$router.go(-1);
@@ -163,7 +259,7 @@
           this.dialog = !this.dialog;
         }
       },
-      checkIfOwnfMessage(message){
+      checkIfOwnMessage(message) {
         return this.user && this.user._id === message.messageUser._id;
       }
     }

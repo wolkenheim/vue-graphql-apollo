@@ -60,6 +60,8 @@ new Vue({
   store,
   render: h => h(App),
   created() {
-    this.$store.dispatch('getCurrentUser');
+    this.$store.dispatch('initUser');
+    // not necessary, user data is in localStorage
+    //this.$store.dispatch('getCurrentUser');
   }
 }).$mount("#app");

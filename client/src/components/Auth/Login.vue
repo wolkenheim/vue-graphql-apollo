@@ -90,8 +90,9 @@
           this.$store.dispatch('loginUser', {
             email: this.email,
             password: this.password
-          })
+          });
         }
+
       }
     }
   };
