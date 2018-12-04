@@ -78,7 +78,6 @@ module.exports = {
       return newPost;
     },
     addPostMessage: async (_, { messageBody, userId, postId }, { Post }) => {
-      console.log(messageBody, userId, postId);
       const newMessage = {
         messageBody,
         messageUser: userId
@@ -96,6 +95,47 @@ module.exports = {
       });
       return post.messages[0];
     },
+    /**
+     * User likes one particular post, post gets added to this User´s favorites posts
+     * @param _
+     * @param postId
+     * @param username
+     * @param Post
+     * @param User
+     * @returns {Promise<{likes: number, favorites: Array}>}
+     */
+    likePost: async (_, { postId, username }, { Post, User }) => {
+      const post = await Post.findOneAndUpdate(
+        { _id: postId },
+        { $inc: { likes: 1 } },
+        { new: true }
+      );
+      const user = await User.findOneAndUpdate(
+        { username },
+        { $addToSet: { favorites: postId } },
+        { new: true }
+      ).populate({
+        path: 'favorites',
+        model: 'Post'
+      });
+      return { likes: post.likes, favorites: user.favorites }
+    },
+    unlikePost: async (_, { postId, username }, { Post, User }) => {
+      const post = await Post.findOneAndUpdate(
+        { _id: postId },
+        { $inc: { likes: -1 } },
+        { new: true }
+      );
+      const user = await User.findOneAndUpdate(
+        { username },
+        { $pull: { favorites: postId } },
+        { new: true }
+      ).populate({
+        path: 'favorites',
+        model: 'Post'
+      });
+      return { likes: post.likes, favorites: user.favorites }
+    },
     loginUser: async (_, { email, password }, { User }) => {
       const user = await User.findOne({ email });
       if (!user) {
@@ -108,17 +148,19 @@ module.exports = {
       }
       return { token: createToken(user, process.env.JWT_SALT, '1hr'), user };
     },
-    registerUser: async (_, { username, email, password }, { User }) => {
-      const user = await User.findOne({ username });
-      if (user) {
-        throw new Error("User already exists");
+    registerUser:
+      async (_, { username, email, password }, { User }) => {
+        const user = await User.findOne({ username });
+        if (user) {
+          throw new Error("User already exists");
+        }
+        const newUser = await new User({
+          username,
+          email,
+          password
+        }).save();
+        return { token: createToken(newUser, process.env.JWT_SALT, '1hr') };
       }
-      const newUser = await new User({
-        username,
-        email,
-        password
-      }).save();
-      return { token: createToken(newUser, process.env.JWT_SALT, '1hr') };
-    }
   }
-};
+}
+;
