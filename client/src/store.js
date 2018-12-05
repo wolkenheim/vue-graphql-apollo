@@ -21,10 +21,16 @@ export default new Vuex.Store({
     user: null,
     error: null,
     authError: null,
+    searchResults: []
   },
   mutations: {
     setPosts: (state, posts) => {
       state.posts = posts;
+    },
+    setSearchResults: (state, payload) => {
+      if (payload !== null) {
+        state.searchResults = payload;
+      }
     },
     setLoading: (state, value) => {
       state.loading = value;
@@ -43,11 +49,16 @@ export default new Vuex.Store({
       state.user = null;
       localStorage.setItem('user', '');
     },
-    clearError: state => (state.error = null)
+    clearError: state => (state.error = null),
+    clearSearchResults: state => {
+      state.searchResults = []
+    }
   },
   actions: {
     initUser: ({ commit, state }) => {
-      state.user = JSON.parse(localStorage.getItem('user'));
+      if (localStorage.getItem('user')) {
+        state.user = JSON.parse(localStorage.getItem('user'));
+      }
     },
     getCurrentUser: ({ commit }) => {
       commit('setLoading');
@@ -80,7 +91,7 @@ export default new Vuex.Store({
         query: SEARCH_POSTS,
         variables: payload,
       }).then(({ data }) => {
-        console.log(data);
+        commit('setSearchResults', data.searchPosts);
       }).catch(err => console.log(err));
     },
     addPost: ({ commit }, payload) => {

@@ -40,6 +40,21 @@
                     single-line
                     hide-details></v-text-field>
 
+      <v-card dark v-if="searchResults.length" id="search__card">
+        <v-list>
+          <v-list-tile v-for="result in searchResults" :key="result._id" @click="goToSearchResult(result._id)">
+            <v-list-tile-title>
+              {{ result.title }}
+              <span class="font-weight-thin">{{ formatDescription(result.description) }}</span>
+            </v-list-tile-title>
+            <v-list-tile-action v-if="checkIfIsUserFavoritesPost(result._id)">
+              <v-icon>favorite</v-icon>
+            </v-list-tile-action>
+
+          </v-list-tile>
+        </v-list>
+      </v-card>
+
       <v-spacer></v-spacer>
 
       <!-- Horizontal Navbar Links -->
@@ -105,7 +120,7 @@
       }
     },
     computed: {
-      ...mapState(['user', 'authError']),
+      ...mapState(['user', 'authError', 'searchResults']),
       userFavorites() {
         return this.$store.getters.userFavorites;
       },
@@ -166,11 +181,29 @@
       },
       handleSearchPosts() {
         this.$store.dispatch('searchPosts', { searchTerm: this.searchTerm });
+      },
+      goToSearchResult(_id){
+        this.$store.commit('clearSearchResults');
+        this.searchTerm = "";
+        return this.$router.push(`/posts/${_id}`);
+      },
+      formatDescription(desc){
+        return desc.length > 20 ? `${desc.slice(0,20)}` : desc;
+      },
+      checkIfIsUserFavoritesPost(id){
+        return this.userFavorites && this.userFavorites.some(fave => fave._id === id)
       }
     }
   }
 </script>
 <style>
+  #search__card {
+    position: absolute;
+    width: 100vw;
+    z-index:8;
+    top: 100%;
+  }
+
   #header_search {
     padding-top: 0;
   }
