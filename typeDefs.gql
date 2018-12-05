@@ -43,7 +43,7 @@ type Query {
   getPosts: [Post]
   getPost(postId: ID!): Post!
   infiniteScrollPosts(pageNum: Int!, pageSize: Int!): PostsPage
-
+  searchPosts(searchTerm:String): [Post]
 }
 
 type Token {

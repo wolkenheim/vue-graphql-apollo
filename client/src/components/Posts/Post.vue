@@ -130,7 +130,7 @@
       }
     },
     computed: {
-      ...mapState(["user", "userFavorites"])
+      ...mapState(["user"])
     },
     methods: {
       /**

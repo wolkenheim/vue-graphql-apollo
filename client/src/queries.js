@@ -115,6 +115,18 @@ export const INFINITE_SCROLL_POSTS = gql`
     }
     `;
 
+export const SEARCH_POSTS = gql`
+  query($searchTerm: String) {
+    searchPosts(searchTerm: $searchTerm) {
+      _id
+      title
+      description
+      imageUrl
+      likes
+    }
+  }
+`;
+
 
 export const LOGIN_USER = gql`
     mutation($email: String!, $password: String!) {
@@ -138,7 +150,7 @@ export const LOGIN_USER = gql`
     }
     `;
 
-export const LIKE_POST  = gql`
+export const LIKE_POST = gql`
     mutation($postId: ID!, $username: String!) {
       likePost(
         postId: $postId
@@ -154,7 +166,7 @@ export const LIKE_POST  = gql`
     }
     `;
 
-export const UNLIKE_POST  = gql`
+export const UNLIKE_POST = gql`
     mutation($postId: ID!, $username: String!) {
       unlikePost(
         postId: $postId

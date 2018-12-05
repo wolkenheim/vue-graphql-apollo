@@ -31,7 +31,13 @@
 
       <v-spacer></v-spacer>
 
-      <v-text-field id="header_search" flex prepend-icon="search" placeholder="Search posts" color="accent" single-line
+      <v-text-field id="header_search"
+                    v-model="searchTerm"
+                    @input="handleSearchPosts"
+                    flex prepend-icon="search"
+                    placeholder="Search posts"
+                    color="accent"
+                    single-line
                     hide-details></v-text-field>
 
       <v-spacer></v-spacer>
@@ -91,6 +97,7 @@
     name: 'App',
     data() {
       return {
+        searchTerm: "",
         authErrorSnackbar: false,
         authSnackbar: false,
         showSideNav: false,
@@ -99,7 +106,7 @@
     },
     computed: {
       ...mapState(['user', 'authError']),
-      userFavorites(){
+      userFavorites() {
         return this.$store.getters.userFavorites;
       },
       horizontalNavbar() {
@@ -156,6 +163,9 @@
       },
       onLogoutUser() {
         this.$store.dispatch('logoutUser');
+      },
+      handleSearchPosts() {
+        this.$store.dispatch('searchPosts', { searchTerm: this.searchTerm });
       }
     }
   }
