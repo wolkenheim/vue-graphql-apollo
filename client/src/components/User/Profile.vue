@@ -68,7 +68,7 @@
             <v-btn @click="openEditPost(post)" color="info" floating fab small dark>
               <v-icon>edit</v-icon>
             </v-btn>
-            <v-btn @click="handleDeleteUserPost(post)" color="error" floating fab small dark>
+            <v-btn @click="deletePost(post._id)" color="error" floating fab small dark>
               <v-icon>delete</v-icon>
             </v-btn>
 
@@ -113,7 +113,7 @@
       ...mapState(["user", "userPosts"])
     },
     created() {
-      this.handleGetUserPosts();
+      this.getUserPosts();
 
       EventBus.$on('submitPostForm', ({parentName, post}) => {
         if (parentName !== this.$options.name) return;
@@ -121,7 +121,7 @@
       })
     },
     methods: {
-      handleGetUserPosts() {
+      getUserPosts() {
         this.$store.dispatch("getUserPosts", {
           userId: this.user._id
         });
@@ -130,14 +130,13 @@
         this.$store.dispatch("updateUserPost", JSON.parse(JSON.stringify(post)));
         this.editPostDialog = false;
       },
-      handleDeleteUserPost(post) {
-        this.loadPost(post, false);
+      deletePost(postId) {
         const deletePost = window.confirm(
           "Are you sure you want to delete this post?"
         );
         if (deletePost) {
           this.$store.dispatch("deleteUserPost", {
-            postId: this.postId
+            postId: postId
           });
         }
       },

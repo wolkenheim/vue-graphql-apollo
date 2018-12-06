@@ -13,7 +13,8 @@ import {
   REGISTER_USER,
   GET_CURRENT_USER,
   SEARCH_POSTS,
-  GET_USER_POSTS
+  GET_USER_POSTS,
+  INFINITE_SCROLL_POSTS
 } from './queries';
 import { defaultClient as apolloClient } from './main';
 
@@ -133,16 +134,26 @@ export default new Vuex.Store({
           },
           // optimistic response ensures data is added immediately as we specified for the update function
           optimisticResponse: {
-            __typename: 'Mutation',
+            __typename: "Mutation",
             addPost: {
-              __typename: 'Post',
+              __typename: "Post",
               _id: -1,
               ...payload
             }
-          }
+          },
+          // Rerun specified queries after performing the mutation in order to get fresh data
+          refetchQueries: [
+            {
+              query: INFINITE_SCROLL_POSTS,
+              variables: {
+                pageNum: 1,
+                pageSize: 2
+              }
+            }
+          ]
         })
         .then(({ data }) => {
-          console.log(data.addPost);
+          //console.log(data.addPost);
         })
         .catch(err => {
           console.error(err);

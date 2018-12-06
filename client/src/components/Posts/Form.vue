@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-form v-model="isFormValid" lazy-validation ref="form" @submit.prevent="submitForm">
+  <v-form v-model="isFormValid" ref="form" @submit.prevent="submitForm">
 
     <!-- Title Input -->
     <v-layout row>
@@ -12,8 +12,8 @@
     <!-- Image Url Input -->
     <v-layout row>
       <v-flex xs12>
-        <v-text-field v-model="imageUrl" label="Image URL" type="text"
-                      ></v-text-field>
+        <v-text-field v-model="imageUrl" :rules="imageRules" label="Image URL" type="text"
+                      required></v-text-field>
       </v-flex>
     </v-layout>
 

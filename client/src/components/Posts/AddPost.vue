@@ -38,9 +38,11 @@
     },
     created() {
       EventBus.$on('submitPostForm', ({parentName, post}) => {
-        delete post.postId;
         if (parentName !== this.$options.name) return;
-        this.addPost(post);
+
+        let createdPost = JSON.parse(JSON.stringify(post));
+        delete createdPost.postId;
+        this.addPost(createdPost);
       });
     },
     methods: {
