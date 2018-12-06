@@ -78,6 +78,12 @@ module.exports = {
         return searchResults;
       }
     },
+    getUserPosts: async (_, { userId }, { Post }) => {
+      const posts = await Post.find({
+        userId: userId
+      });
+      return posts;
+    },
   },
   Mutation: {
     addPost: async (
@@ -93,6 +99,23 @@ module.exports = {
         userId,
       }).save();
       return newPost;
+    },
+    updateUserPost: async (
+      _,
+      { postId, userId, title, imageUrl, categories, description },
+      { Post }
+    ) => {
+      const post = await Post.findOneAndUpdate(
+        // Find post by postId and createdBy
+        { _id: postId, userId: userId },
+        { $set: { title, imageUrl, categories, description } },
+        { new: true }
+      );
+      return post;
+    },
+    deleteUserPost: async (_, { postId }, { Post }) => {
+      const post = await Post.findOneAndRemove({ _id: postId });
+      return post;
     },
     addPostMessage: async (_, { messageBody, userId, postId }, { Post }) => {
       const newMessage = {
