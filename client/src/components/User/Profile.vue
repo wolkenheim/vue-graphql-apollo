@@ -84,7 +84,7 @@
       <v-card>
         <v-card-title class="headline grey lighten-2">Update Post</v-card-title>
         <v-container>
-          <post-form :post="postToEdit" :userId="user._id"></post-form>
+          <post-form :post="postToEdit" :userId="user._id" :parent-name="$options.name"></post-form>
         </v-container>
       </v-card>
     </v-dialog>
@@ -115,7 +115,8 @@
     created() {
       this.handleGetUserPosts();
 
-      EventBus.$on('submitPostForm', post => {
+      EventBus.$on('submitPostForm', ({parentName, post}) => {
+        if (parentName !== this.$options.name) return;
         this.updatePost(post);
       })
     },
@@ -126,7 +127,7 @@
         });
       },
       updatePost(post) {
-        this.$store.dispatch("updateUserPost", post);
+        this.$store.dispatch("updateUserPost", JSON.parse(JSON.stringify(post)));
         this.editPostDialog = false;
       },
       handleDeleteUserPost(post) {

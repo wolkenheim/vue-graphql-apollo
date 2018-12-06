@@ -6,7 +6,7 @@ import AddPost from './components/Posts/AddPost.vue'
 import Posts from './components/Posts/Posts.vue'
 import Post from './components/Posts/Post.vue'
 
-import Profile from './components/Auth/Profile.vue'
+import Profile from './components/User/Profile.vue'
 import Login from './components/Auth/Login.vue'
 import Register from './components/Auth/Register.vue'
 

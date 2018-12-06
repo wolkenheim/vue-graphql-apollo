@@ -12,8 +12,8 @@
     <!-- Image Url Input -->
     <v-layout row>
       <v-flex xs12>
-        <v-text-field :rules="imageRules" v-model="imageUrl" label="Image URL" type="text"
-                      required></v-text-field>
+        <v-text-field v-model="imageUrl" label="Image URL" type="text"
+                      ></v-text-field>
       </v-flex>
     </v-layout>
 
@@ -28,7 +28,7 @@
     <v-layout row>
       <v-flex xs12>
         <v-select v-model="categories" :rules="categoriesRules"
-                  :items="['Art', 'Education', 'Travel', 'Photography', 'Technology']" multiple
+                  :items="postCategories" multiple
                   label="Categories"></v-select>
       </v-flex>
     </v-layout>
@@ -64,6 +64,7 @@
     name: "PostForm",
     props: {
       userId: String,
+      parentName: String,
       post: {
         type: Object,
         default: () => {
@@ -77,12 +78,8 @@
       }
     },
     watch: {
-      post({ _id, title, imageUrl, categories, description }) {
-        this.postId = _id;
-        this.title = title;
-        this.imageUrl = imageUrl;
-        this.categories = categories;
-        this.description = description;
+      post(post) {
+        this.assignPostToInputFields(post);
       }
     },
     data() {
@@ -110,18 +107,29 @@
       };
     },
     computed: {
-      ...mapState(['user', 'error', 'loading'])
+      ...mapState(['user', 'error', 'loading','postCategories'])
     },
     methods: {
+      assignPostToInputFields({ _id, title, imageUrl, categories, description }) {
+        this.postId = _id;
+        this.title = title;
+        this.imageUrl = imageUrl;
+        this.categories = categories;
+        this.description = description;
+      },
       submitForm() {
         if (this.$refs.form.validate()) {
-          EventBus.$emit('submitPostForm', {
-            postId: this.postId,
-            userId: this.userId,
-            title: this.title,
-            imageUrl: this.imageUrl,
-            categories: this.categories,
-            description: this.description
+          EventBus.$emit('submitPostForm',
+            {
+              parentName: this.parentName,
+              post: {
+                postId: this.postId,
+                userId: this.userId,
+                title: this.title,
+                imageUrl: this.imageUrl,
+                categories: this.categories,
+                description: this.description
+              }
           });
         }
       }

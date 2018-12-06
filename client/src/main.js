@@ -50,6 +50,8 @@ export const defaultClient = new ApolloClient({
 
 });
 
+// needs to be called even before beforeCreate()
+// otherwise AuthGuard in router is called before user is initalized
 store.dispatch('initUser');
 
 const apolloProvider = new VueApollo({ defaultClient });

@@ -12,7 +12,7 @@
     <v-layout row wrap>
       <v-flex xs12 sm6 offset-sm3>
 
-        <post-form :userId="user._id"></post-form>
+        <post-form :userId="user._id" :parent-name="$options.name"></post-form>
 
       </v-flex>
     </v-layout>
@@ -37,14 +37,15 @@
       ...mapState(['user', 'error', 'loading'])
     },
     created() {
-      EventBus.$on('submitPostForm', post => {
+      EventBus.$on('submitPostForm', ({parentName, post}) => {
+        delete post.postId;
+        if (parentName !== this.$options.name) return;
         this.addPost(post);
-      })
+      });
     },
     methods: {
-      addPost() {
+      addPost(post) {
           this.$store.dispatch('addPost', post);
-          console.log("add post", post);
           this.$router.push("/");
         }
 
