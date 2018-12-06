@@ -1,5 +1,5 @@
 <template>
-
+<div>
   <v-form v-model="isFormValid" lazy-validation ref="form" @submit.prevent="submitForm">
 
     <!-- Title Input -->
@@ -53,6 +53,7 @@
     </v-layout>
 
   </v-form>
+</div>
 </template>
 
 <script>

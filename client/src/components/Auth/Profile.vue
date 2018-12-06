@@ -97,7 +97,7 @@
   import { mapState } from "vuex";
   import PostForm from "../Posts/Form";
   import Post from "../Posts/Post";
-  import { EventBus } from "../../event";
+  import { EventBus } from "@/event";
 
   export default {
     name: "Profile",
@@ -116,7 +116,7 @@
       this.handleGetUserPosts();
 
       EventBus.$on('submitPostForm', post => {
-        this.handleUpdateUserPost(post);
+        this.updatePost(post);
       })
     },
     methods: {
@@ -125,7 +125,7 @@
           userId: this.user._id
         });
       },
-      handleUpdateUserPost(post) {
+      updatePost(post) {
         this.$store.dispatch("updateUserPost", post);
         this.editPostDialog = false;
       },

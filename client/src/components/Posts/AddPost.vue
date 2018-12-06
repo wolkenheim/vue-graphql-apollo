@@ -12,7 +12,7 @@
     <v-layout row wrap>
       <v-flex xs12 sm6 offset-sm3>
 
-       <post-form></post-form>
+        <post-form :userId="user._id"></post-form>
 
       </v-flex>
     </v-layout>
@@ -22,7 +22,8 @@
 
 <script>
   import { mapState } from "vuex";
-  import { PostForm } from "./Form"
+  import { EventBus } from "@/event";
+  import PostForm from "@/components/Posts/Form";
 
   export default {
     name: "AddPost",
@@ -35,22 +36,18 @@
     computed: {
       ...mapState(['user', 'error', 'loading'])
     },
-    created(){
-
+    created() {
+      EventBus.$on('submitPostForm', post => {
+        this.addPost(post);
+      })
     },
     methods: {
       addPost() {
-        if (this.$refs.form.validate()) {
-          this.$store.dispatch('addPost', {
-            title: this.title,
-            imageUrl: this.imageUrl,
-            categories: this.categories,
-            description: this.description,
-            userId: this.user._id,
-          });
+          this.$store.dispatch('addPost', post);
+          console.log("add post", post);
           this.$router.push("/");
         }
-      }
+
     }
   };
 </script>

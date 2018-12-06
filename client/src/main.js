@@ -50,6 +50,8 @@ export const defaultClient = new ApolloClient({
 
 });
 
+store.dispatch('initUser');
+
 const apolloProvider = new VueApollo({ defaultClient });
 
 Vue.config.productionTip = false;
@@ -59,9 +61,4 @@ new Vue({
   router,
   store,
   render: h => h(App),
-  created() {
-    this.$store.dispatch('initUser');
-    // not necessary, user data is in localStorage
-    //this.$store.dispatch('getCurrentUser');
-  }
 }).$mount("#app");
