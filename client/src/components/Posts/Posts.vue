@@ -29,7 +29,7 @@
 
                 <v-list-tile-content>
                   <v-list-tile-title class="text--primary">{{post.userId.username}}</v-list-tile-title>
-                  <v-list-tile-sub-title class="font-weight-thin">Added {{post.createdDate}}</v-list-tile-sub-title>
+                  <v-list-tile-sub-title class="font-weight-thin">Added {{formatCreatedDate(post.createdDate)}}</v-list-tile-sub-title>
                 </v-list-tile-content>
 
                 <v-list-tile-action>
@@ -59,6 +59,7 @@
 
 <script>
   import { INFINITE_SCROLL_POSTS } from "../../queries";
+  import moment from 'moment';
 
   const pageSize = 2;
 
@@ -81,8 +82,11 @@
       }
     },
     methods: {
-      goToPost(_id){
-        this.$router.push(`/posts/${_id}`);
+      formatCreatedDate(date){
+        return moment(new Date(date)).format('ll');
+      },
+      goToPost(_id) {
+        this.$router.push(`/posts/${ _id }`);
       },
       showMorePosts() {
         this.pageNum += 1;
