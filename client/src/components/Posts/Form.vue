@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-form v-model="isFormValid" ref="form" @submit.prevent="submitForm">
+  <v-form v-model="isFormValid" ref="form" @submit.prevent>
 
     <!-- Title Input -->
     <v-layout row>
@@ -43,7 +43,7 @@
 
     <v-layout row>
       <v-flex xs12>
-        <v-btn :loading="loading" :disabled="!isFormValid || loading" color="info" type="submit">
+        <v-btn :loading="loading" :disabled="!isFormValid || loading" color="info" type="submit"  @click="submitForm">
                 <span slot="loader" class="custom-loader">
                   <v-icon light>cached</v-icon>
                 </span>

@@ -75,7 +75,7 @@
                   </v-list-tile-title>
                   <v-list-tile-sub-title>
                     {{message.messageUser.username}}
-                    <span class="grey--text text--lighten-1 hidden-xs-only">{{message.messageDate}}</span>
+                    <span class="grey--text text--lighten-1 hidden-xs-only">{{getTimeFromNow(message.messageDate)}}</span>
                   </v-list-tile-sub-title>
                 </v-list-tile-content>
 
@@ -102,6 +102,7 @@
     LIKE_POST,
     UNLIKE_POST
   } from "../../queries";
+  import moment from 'moment';
 
   export default {
     name: "Post",
@@ -133,6 +134,9 @@
       ...mapState(["user"])
     },
     methods: {
+      getTimeFromNow(time){
+        return moment(new Date(time)).fromNow();
+      },
       /**
        * Did user alread like this post?
        * @param postId
